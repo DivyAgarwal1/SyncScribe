@@ -5,7 +5,7 @@
   
   **A high-performance, real-time collaborative workspace and text editor.**
   
-  [Live Demo](https://syncscribe-editor.onrender.com) · [Report Bug](#) · [Request Feature](#)
+  [Live Demo](https://syncscribe-editor.onrender.com)
 </div>
 
 <br />
