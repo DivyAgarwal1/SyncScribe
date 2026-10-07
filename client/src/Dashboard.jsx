@@ -110,16 +110,50 @@ export default function Dashboard({ onLogin }) {
               const email = document.getElementById('login-email').value;
               const pass = document.getElementById('login-password').value;
               if (email && pass) {
-                const name = email.includes('@') ? email.split('@')[0] : email;
-                const colors = ['#4f46e5', '#ec4899', '#14b8a6', '#f59e0b', '#8b5cf6', '#ef4444', '#10b981'];
-                const myUser = { 
-                  name: name.charAt(0).toUpperCase() + name.slice(1), 
-                  color: colors[Math.floor(Math.random() * colors.length)],
-                  email: email
-                };
-                setCurrentUser(myUser);
-                localStorage.setItem('userProfile', JSON.stringify(myUser));
-                if (onLogin) onLogin();
+                // Fetch the simulated database of accounts from localStorage
+                const accountsDb = JSON.parse(localStorage.getItem('accountsDb') || '{}');
+
+                if (isLogin) {
+                  // Verify Login
+                  if (!accountsDb[email]) {
+                    alert('Account not found! Please switch to "Sign Up" to create an account.');
+                    return;
+                  }
+                  if (accountsDb[email].password !== pass) {
+                    alert('Incorrect password! Please try again.');
+                    return;
+                  }
+                  // Login Successful
+                  const myUser = accountsDb[email].profile;
+                  setCurrentUser(myUser);
+                  localStorage.setItem('userProfile', JSON.stringify(myUser));
+                  if (onLogin) onLogin();
+                } else {
+                  // Handle Sign Up
+                  if (accountsDb[email]) {
+                    alert('An account with this email already exists! Please sign in.');
+                    return;
+                  }
+                  // Create new account
+                  const name = email.includes('@') ? email.split('@')[0] : email;
+                  const colors = ['#4f46e5', '#ec4899', '#14b8a6', '#f59e0b', '#8b5cf6', '#ef4444', '#10b981'];
+                  const myUser = { 
+                    name: name.charAt(0).toUpperCase() + name.slice(1), 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    email: email
+                  };
+                  
+                  accountsDb[email] = {
+                    password: pass,
+                    profile: myUser
+                  };
+                  localStorage.setItem('accountsDb', JSON.stringify(accountsDb));
+                  
+                  // Automatically log them in after sign up
+                  setCurrentUser(myUser);
+                  localStorage.setItem('userProfile', JSON.stringify(myUser));
+                  if (onLogin) onLogin();
+                }
               }
             }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
